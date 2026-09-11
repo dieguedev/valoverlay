@@ -1,3 +1,4 @@
+import type { HealthResponse } from '@valoverlay/shared'
 import { useEffect, useState } from 'react'
 
 function App() {
@@ -5,7 +6,7 @@ function App() {
 
   useEffect(() => {
     fetch('http://localhost:3050/health')
-      .then((res) => res.json())
+      .then((res) => res.json() as Promise<HealthResponse>)
       .then((data) => setStatus(data.status))
       .catch(() => setStatus('unreachable'))
   }, [])

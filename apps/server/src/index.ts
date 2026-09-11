@@ -1,3 +1,4 @@
+import type { HealthResponse } from "@valoverlay/shared";
 import cors from "cors";
 import express from "express";
 
@@ -7,7 +8,8 @@ const port = process.env.PORT ?? 3000;
 app.use(cors());
 
 app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
+  const body: HealthResponse = { status: "ok" };
+  res.json(body);
 });
 
 app.listen(port, () => {
