@@ -1,17 +1,22 @@
-import type { HealthResponse } from '@valoverlay/shared'
 import { useEffect, useState } from 'react'
+import { io } from 'socket.io-client'
 
 function App() {
-  const [status, setStatus] = useState<string>('loading...')
+  const [lastTick, setLastTick] = useState<string>('waiting for tick...')
 
   useEffect(() => {
-    fetch('http://localhost:3050/health')
-      .then((res) => res.json() as Promise<HealthResponse>)
-      .then((data) => setStatus(data.status))
-      .catch(() => setStatus('unreachable'))
+    const socket = io('http://localhost:3050')
+
+    socket.on('tick', (data: { timestamp: number }) => {
+      setLastTick(new Date(data.timestamp).toLocaleTimeString())
+    })
+
+    return () => {
+      socket.disconnect()
+    }
   }, [])
 
-  return <p>server status: {status}</p>
+  return <p>last tick: {lastTick}</p>
 }
 
 export default App
