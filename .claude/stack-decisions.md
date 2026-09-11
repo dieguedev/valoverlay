@@ -244,3 +244,6 @@ customización.
 - Sin decidir todavía: pipeline de CI/CD, gestión de secretos en el VPS,
   y el detalle fino del flujo de refresh de tokens de Riot (expiración,
   reintentos).
+- Las credenciales de Postgres en `docker-compose.yml` están hardcodeadas
+  (`valoverlay`/`valoverlay`), válido solo para desarrollo local. Antes de
+  desplegar en el VPS hay que moverlas a un `.env` no versionado.
