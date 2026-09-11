@@ -1,11 +1,25 @@
+import { createServer } from "node:http";
 import type { HealthResponse } from "@valoverlay/shared";
 import cors from "cors";
 import express from "express";
+import { Server } from "socket.io";
 import { ping } from "./db/schema.js";
 import { db } from "./db/index.js";
 
 const app = express();
 const port = process.env.PORT ?? 3000;
+const httpServer = createServer(app);
+const io = new Server(httpServer, { cors: { origin: "*" } });
+
+io.on("connection", (socket) => {
+  const interval = setInterval(() => {
+    socket.emit("tick", { timestamp: Date.now() });
+  }, 2000);
+
+  socket.on("disconnect", () => {
+    clearInterval(interval);
+  });
+});
 
 app.use(cors());
 
@@ -23,6 +37,6 @@ app.get("/db-health", async (_req, res) => {
   }
 });
 
-app.listen(port, () => {
+httpServer.listen(port, () => {
   console.log(`Server listening on port ${port}`);
 });
