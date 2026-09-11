@@ -39,6 +39,37 @@ importers:
         specifier: ^8.2.2
         version: 8.3.0(@types/node@24.13.4)
 
+  apps/panel:
+    dependencies:
+      react:
+        specifier: ^19.2.8
+        version: 19.3.0
+      react-dom:
+        specifier: ^19.2.8
+        version: 19.3.0(react@19.3.0)
+    devDependencies:
+      '@types/node':
+        specifier: ^24.13.3
+        version: 24.13.4
+      '@types/react':
+        specifier: ^19.2.18
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: ^19.2.4
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: ^6.1.0
+        version: 6.1.1(vite@8.3.0(@types/node@24.13.4))
+      oxlint:
+        specifier: ^1.79.0
+        version: 1.82.0
+      typescript:
+        specifier: ~6.0.2
+        version: 6.0.3
+      vite:
+        specifier: ^8.2.2
+        version: 8.3.0(@types/node@24.13.4)
+
 packages:
 
   '@oxc-project/types@0.149.0':
