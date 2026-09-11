@@ -204,7 +204,8 @@ drag & drop libre (dnd-kit) más adelante.
 ```
 apps/
   server/    # Express + Socket.IO + Drizzle + Better Auth
-  panel/     # React + Vite — app de customización (con sesión de usuario)
+  panel/     # React + Vite — landing pública (sin sesión) + dashboard de
+             # customización (con sesión de usuario), misma app
   overlay/   # React + Vite — app que corre dentro del Browser Source de OBS
 packages/
   shared/    # Tipos TS compartidos: eventos Socket.IO, schema Drizzle, payloads de stats
@@ -218,6 +219,21 @@ packages/
   (`pnpm --filter overlay dev`) — estándar de facto actual para monorepos
   JS/TS.
 - Todo se levanta junto con un único `docker-compose.yml` (ver punto 7).
+
+## 13. Landing pública dentro de `panel`
+
+**Decisión:** la landing pública de `valoverlay.com` (la página de marketing
+que explica el producto antes de loguearse) vive dentro de `apps/panel`,
+como rutas públicas sin sesión, en la misma app que el dashboard de
+customización.
+
+**Por qué:**
+- Evita una cuarta app en el monorepo solo para una landing, cuando ya
+  existe `panel` como app React con Vite lista para servir rutas públicas
+  y privadas por igual.
+- El cambio entre "landing" y "dashboard" es solo de sesión (usuario
+  logueado o no), no de stack ni de build — no justifica separar el
+  despliegue.
 
 ## Pendientes / riesgos abiertos
 
