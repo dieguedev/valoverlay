@@ -7,6 +7,10 @@ function App() {
   useEffect(() => {
     const socket = io('http://localhost:3050')
 
+    socket.on('connect', () => {
+      socket.emit('join', 'dev-token')
+    })
+
     socket.on('tick', (data: { timestamp: number }) => {
       setLastTick(new Date(data.timestamp).toLocaleTimeString())
     })

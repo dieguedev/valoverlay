@@ -11,15 +11,17 @@ const port = process.env.PORT ?? 3000;
 const httpServer = createServer(app);
 const io = new Server(httpServer, { cors: { origin: "*" } });
 
-io.on("connection", (socket) => {
-  const interval = setInterval(() => {
-    socket.emit("tick", { timestamp: Date.now() });
-  }, 2000);
+const DEV_TOKEN = "dev-token";
 
-  socket.on("disconnect", () => {
-    clearInterval(interval);
+io.on("connection", (socket) => {
+  socket.on("join", (token: string) => {
+    socket.join(token);
   });
 });
+
+setInterval(() => {
+  io.to(DEV_TOKEN).emit("tick", { timestamp: Date.now() });
+}, 2000);
 
 app.use(cors());
 
