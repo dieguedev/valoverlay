@@ -33,8 +33,13 @@ oficial de Riot Games en producción, endpoint `val-match-v1`.
   tools that allow players to view their own match histories and aggregate
   stats" — encaja con el producto.
 - **Riesgo abierto:** la aprobación del RSO Client por parte de Riot no está
-  garantizada y puede tardar. Se recomienda solicitarla cuanto antes,
-  en paralelo al desarrollo contra mocks.
+  garantizada y puede tardar. Además, el proceso es **secuencial, no
+  paralelo**: Riot requiere ver un MVP funcionando (contra mocks) antes de
+  siquiera evaluar la solicitud de acceso de producción — no se puede
+  solicitar el RSO Client desde el día 1. Esto convierte el desarrollo
+  contra mocks en un prerrequisito obligatorio, no solo en una comodidad
+  de desarrollo, y añade una fase completa (construir MVP → solicitar →
+  esperar aprobación) al calendario antes de poder mostrar datos reales.
 
 **Fuentes consultadas:**
 - https://www.riotgames.com/en/DevRel/valorant-api-launch
@@ -238,7 +243,9 @@ customización.
 ## Pendientes / riesgos abiertos
 
 - **Aprobación del RSO Client por Riot** — bloqueante para tener datos
-  reales en producción. Sin fecha garantizada; solicitar cuanto antes.
+  reales en producción. Sin fecha garantizada y **no se puede solicitar
+  hasta tener un MVP construido y funcionando contra mocks** (ver punto 2)
+  — no es una solicitud que se pueda adelantar en paralelo al desarrollo.
 - Definir el esquema exacto de eventos Socket.IO (payloads de stats en
   vivo) antes de implementar `packages/shared`.
 - Sin decidir todavía: pipeline de CI/CD, gestión de secretos en el VPS,

@@ -73,12 +73,24 @@ acceso a datos de terceros sin su consentimiento. Mientras se desarrolla el
 producto y no se dispone todavía de aprobación de Riot para producción, se
 trabaja contra datos simulados (mocks).
 
+Importante: el acceso de producción a la API de Riot **no se puede
+solicitar desde el día 1** — Riot exige ver un MVP funcionando (contra
+mocks) antes de evaluar la solicitud. Es decir, "desarrollar contra mocks"
+no es solo una comodidad temporal, es un prerrequisito obligatorio de
+Riot: primero MVP completo, después solicitud, después (si se aprueba)
+datos reales.
+
 ## Estado actual
 
-Fase de diseño de arquitectura, repositorio vacío. El desarrollo aún no ha
-empezado. La aprobación del acceso de producción por parte de Riot es un
-paso externo pendiente y condiciona cuándo el producto puede dejar de
-depender de datos simulados.
+Fase inicial de desarrollo: monorepo scaffoldeado (server, panel, overlay,
+paquete compartido), Postgres conectado vía Drizzle, y un primer canal de
+Socket.IO entre server y overlay (con token hardcodeado de desarrollo, aún
+sin autenticación real). Todavía no hay auth de usuarios ni datos de Riot.
+La aprobación del acceso de producción por parte de Riot es un paso
+externo pendiente que **no se puede solicitar hasta tener un MVP completo
+funcionando contra mocks** — condiciona no solo cuándo el producto puede
+dejar de depender de datos simulados, sino el orden mismo del roadmap: el
+MVP con mocks es un hito obligatorio, no una fase paralela.
 
 ## Qué NO es (por ahora)
 
