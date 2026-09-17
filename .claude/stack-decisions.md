@@ -49,40 +49,70 @@ oficial de Riot Games en producción, endpoint `val-match-v1`.
 ## 3. Alcance del producto: SaaS multi-usuario desde el día 1
 
 **Decisión:** no es un overlay personal — cualquier usuario podrá entrar a
-`valoverlay.com`, autenticarse con su cuenta Riot y generar su propio
-overlay/panel.
+`valoverlay.com`, crearse una cuenta de la plataforma y generar su propio
+overlay/panel. La cuenta de la plataforma y la cuenta de Riot vinculada son
+dos cosas distintas (ver punto 4): primero se registra/inicia sesión en
+ValoVerlay, y **después**, ya dentro de su perfil, vincula su cuenta de
+Riot vía RSO para poder generar overlays con datos reales.
+
+> **Actualizado** — decisión original (login exclusivamente con Riot)
+> sustituida durante el grilling del bloque "landing-page"; ver punto 4.
 
 **Implicaciones directas sobre el resto del stack:**
-- Cada usuario debe pasar su propio flujo OAuth (RSO) y dar consentimiento
-  de compartir sus datos — no basta con una única autorización del
-  desarrollador.
-- Se necesita backend con gestión de sesiones, base de datos de usuarios y
-  tokens OAuth (con refresh), y separación clara entre "sesión de nuestra
-  app" y "token de Riot" (el segundo nunca debe llegar al navegador del
+- Cada usuario debe pasar su propio flujo de vinculación OAuth (RSO) y dar
+  consentimiento de compartir sus datos de Valorant — no basta con una
+  única autorización del desarrollador, y no es lo mismo que el login a la
+  plataforma.
+- Se necesita backend con gestión de sesiones, base de datos de usuarios,
+  credenciales propias (hasheadas) y/o cuentas OAuth de Google para el
+  login de la plataforma, **más** tokens OAuth de Riot (con refresh) para
+  la cuenta vinculada — con separación clara entre "sesión de nuestra app"
+  y "token de Riot" (el segundo nunca debe llegar al navegador del
   usuario).
 - El overlay debe funcionar sin sesión de navegador interactiva (ver punto 5).
 - Fija también el nombre del producto/dominio: `valoverlay.com`.
 
-## 4. Autenticación de usuarios: Better Auth + RSO
+## 4. Autenticación de usuarios: Better Auth multi-proveedor (login) + RSO (vinculación de cuenta de Riot)
 
-**Decisión:** Better Auth, con su plugin **Generic OAuth** apuntando a RSO
-como proveedor, usando el **adapter oficial de Drizzle**.
+**Decisión:** Better Auth gestiona el **login a la plataforma** con dos
+proveedores — email/password propio y **Google OAuth** — usando el
+**adapter oficial de Drizzle**. Por separado, ya con el usuario
+registrado/logueado, se ofrece dentro de su **perfil** una acción para
+**vincular su cuenta de Riot** vía RSO (con el plugin **Generic OAuth** de
+Better Auth apuntando a RSO como proveedor). Riot no es el método de login
+de la plataforma, es una cuenta vinculada necesaria para poder generar
+overlays con datos reales de Valorant.
 
-**Por qué:**
-- Riot es el único proveedor de identidad — no hay password propio que
-  gestionar.
+> **Actualizado** — reemplaza la decisión original de "Riot como único
+> proveedor de identidad, sin password propio", tomada durante el grilling
+> del bloque "landing-page" (2026-09-17). Motivo: se quiere un login/
+> registro normal de la plataforma (rutas `/login` y `/register`,
+> email/password + Google) independiente de la vinculación de Riot, que
+> pasa a vivir en el perfil del usuario como paso posterior y opcional
+> hasta que se necesiten datos reales.
+
+**Por qué (partes que se mantienen de la decisión original):**
 - RSO es OAuth2 estándar; el plugin Generic OAuth de Better Auth está
   pensado exactamente para proveedores custom que no vienen integrados de
-  serie.
+  serie — se sigue usando, pero como vinculación de cuenta, no como login.
 - Better Auth gestiona el ciclo completo: cookies `httpOnly` + `secure`,
   tabla de sesiones en Postgres, y permite revocar sesiones al instante si
   hace falta (a diferencia de un JWT stateless, que solo expira).
 - El adapter de Drizzle encaja directamente con el ORM ya elegido (ver
   punto 8), sin duplicar capas de acceso a datos.
+- Better Auth soporta de forma nativa tanto proveedores email/password como
+  OAuth (Google) y el linking de cuentas adicionales (Riot) bajo un mismo
+  usuario, sin necesitar una librería de auth distinta para cada caso.
 
 **Fuentes consultadas:**
 - https://better-auth.com/docs/adapters/drizzle
 - https://github.com/better-auth/better-auth (docs/content/docs/adapters/drizzle.mdx)
+
+**Pendiente de investigar más adelante:** el detalle exacto del flujo de
+"vinculación de cuenta de Riot" con Better Auth (si se modela como
+account-linking nativo de Better Auth o como una tabla propia
+`riot_accounts` referenciando al usuario) no está decidido — se resolverá
+cuando se planifique el bloque de auth/server.
 
 ## 5. Identificación del overlay dentro de OBS
 

@@ -35,8 +35,9 @@ herramientas genéricas o de terceros no especializados en el juego.
    usuario.
 
 2. **El panel de customización** — la aplicación web donde el usuario,
-   tras autenticarse con su cuenta de Riot, decide qué estadísticas quiere
-   mostrar y en qué posición. En la primera versión es un formulario
+   tras iniciar sesión en su cuenta de ValoVerlay y vincular su cuenta de
+   Riot, decide qué estadísticas quiere mostrar y en qué posición. En la
+   primera versión es un formulario
    simple (activar/desactivar cada stat + posición preset como
    `top-left`/`top-right`), pensado para poder evolucionar más adelante a
    un editor visual de arrastrar y soltar sin romper las configuraciones ya
@@ -49,11 +50,14 @@ herramientas genéricas o de terceros no especializados en el juego.
 
 ## Cómo encajan entre sí (flujo de usuario)
 
-1. El usuario entra a `valoverlay.com` y se autentica con su cuenta de
-   Riot (Riot es el único proveedor de identidad del producto — no hay
-   registro con email/contraseña propio).
-2. Como parte de ese login, autoriza explícitamente (opt-in) que la
-   plataforma acceda a sus datos de partida vía la API oficial de Riot.
+1. El usuario entra a `valoverlay.com` y se registra/inicia sesión con una
+   cuenta propia de la plataforma (email/contraseña o Google, vía Better
+   Auth — ver [`stack-decisions.md`](./stack-decisions.md) punto 4).
+2. Ya dentro de su perfil, vincula por separado su cuenta de Riot vía RSO,
+   autorizando explícitamente (opt-in) que la plataforma acceda a sus
+   datos de partida vía la API oficial de Riot. Este paso es necesario
+   para generar overlays con datos reales, pero no es el método de login
+   a la plataforma.
 3. En el panel, configura qué estadísticas quiere ver y dónde.
 4. El panel le da una URL única (con un token secreto) que el usuario pega
    como Browser Source en OBS.
