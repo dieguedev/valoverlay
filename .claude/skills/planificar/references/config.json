@@ -1,7 +1,7 @@
 {
   "project_name": "valoverlay",
   "ticket_tracker": {
-    "type": "none"
+    "type": "github"
   },
   "ask_feature_flag": false
 }

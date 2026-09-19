@@ -1,6 +1,6 @@
 ---
 name: ejecutar
-description: Ejecuta paso a paso un plan generado por la skill /planificar, lanzando un subagente por baby-step con el ciclo TDD rojo-verde y un gate de revisión humana entre pasos. Usar cuando el usuario quiera continuar o retomar la implementación de un plan ya aprobado.
+description: Ejecuta un ticket wayfinder (issue hijo de un issue mapa publicado por /planificar + /crear-tickets), lanzando un subagente por baby-step con el ciclo TDD rojo-verde y un gate de revisión humana entre pasos. Usar cuando el usuario quiera continuar o retomar la implementación de un plan ya aprobado y desglosado en tickets.
 disable-model-invocation: true
 ---
 
@@ -8,7 +8,7 @@ disable-model-invocation: true
 
 ## Inicio
 
-Detecta el `PROJECT_ROOT` y lee la config de `planificar` para saber dónde vive el plan:
+Detecta el `PROJECT_ROOT` y lee la config de `planificar`:
 
 ```bash
 PROJECT_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
@@ -22,28 +22,42 @@ PROJECT_NAME=$(python3 -c "import json;print(json.load(open('$CONFIG'))['project
 TICKET_TRACKER_TYPE=$(python3 -c "import json;print(json.load(open('$CONFIG'))['ticket_tracker']['type'])")
 ```
 
-El plan puede vivir en el filesystem local o en una bóveda de Obsidian. `/planificar` guarda en local siempre en la misma ruta fija: `/tmp/${PROJECT_NAME}-tasks/$TASK_ID`.
-
-El usuario **DEBE PROPORCIONAR**:
-
-- El `TASK_ID` con el que se generó el plan (el identificador de rama/ticket si `TICKET_TRACKER_TYPE` no es `none`, o el identificador kebab-case que se usó como nombre de carpeta si es `none`).
-- El método en el que se ha guardado el plan generado por `/planificar`: local u Obsidian.
-
-Si no proporciona estos datos, escríbele lo siguiente:
+El usuario **DEBE PROPORCIONAR** el número del issue mapa (`wayfinder:map`) publicado por `/planificar`. Si no lo da, pídeselo:
 
 ```
-Necesito el identificador de la tarea (TASK_ID) y el método en el que has guardado el plan generado por "/planificar" (local u Obsidian) para poder continuar.
+Necesito el número del issue mapa (el que publicó /planificar con label "wayfinder:map")
+para poder buscar los tickets listos para ejecutar.
 ```
 
-Si se proporcionan los datos, localiza el índice:
+### Frontier query
 
-- **Local**: `OUTPUT_DIR="/tmp/${PROJECT_NAME}-tasks/$TASK_ID"`, lee `$OUTPUT_DIR/indice.md`.
-- **Obsidian**: pide la bóveda si no la ha dado ya, y lee `indice` con el MCP de Obsidian dentro de la carpeta `$PROJECT_NAME/$TASK_ID`.
+Con el número de mapa, lee `$PROJECT_ROOT/docs/agents/issue-tracker.md` (sección "Wayfinding operations") y sigue su convención de **frontier query**: lista los issues hijos abiertos del mapa, descarta los que tengan algún blocker abierto o ya tengan asignado, y ordénalos como diga el issue mapa.
 
-Identifica los pasos pendientes (`[ ]`) y pregunta:
+Presenta la frontera al usuario:
 
 ```
-Plan cargado: #[id] — [título]
+Mapa: #[map] — [título]
+
+Tickets listos para arrancar (sin blockers pendientes, sin asignar):
+  - #[n1] — [título]
+  - #[n2] — [título]
+  ...
+
+¿Con cuál seguimos?
+```
+
+Si el usuario no especifica, toma el primero en el orden del mapa.
+
+### Al elegir un ticket
+
+1. **Claim**: `gh issue edit <n> --add-assignee @me` (primera escritura de la sesión, según la convención de wayfinder).
+2. **Rama dedicada**: crea y cambia a una rama para este ticket, p. ej. `feat/<n>-<slug>`.
+3. **Cargar el plan agrupado**: lee el issue del ticket (`gh issue view <n> --comments`) para obtener el checklist de baby-steps que agrupa y el `FEATURE_SLUG` (de la ruta `.scratch/<feature-slug>/` que apunta). Lee de ahí `indice.md` y localiza, dentro de `steps/*.md`, únicamente los ficheros de los baby-steps que este ticket agrupa.
+
+Identifica los pasos pendientes (`[ ]`) del ticket y pregunta:
+
+```
+Ticket #[n] — [título]
 
 Pasos pendientes:
   [ ] 1. [descripción]
@@ -55,11 +69,11 @@ Pasos pendientes:
 
 ## Ciclo de ejecución por paso
 
-Para **TODOS LOS PASOS**, sigue este ciclo:
+Para **TODOS LOS PASOS**, sigue este ciclo (sin cambios respecto al pipeline anterior — este es el gate fino que no se sacrifica frente al `/implement` oficial):
 
 ### 1. Cargar contexto del paso
 
-Lee el fichero `steps/step-NN-nombre.md` correspondiente (local u Obsidian, según dónde viva el plan). Es el único fichero que el orquestador necesita leer, no cargues las skills aquí.
+Lee el fichero `steps/step-NN-nombre.md` correspondiente. Es el único fichero que el orquestador necesita leer, no cargues las skills aquí.
 
 Este fichero es un **contrato cerrado**, no una propuesta: `planificar` ya decidió el seam, los tests exactos en rojo, el criterio de verde y los commits de este step. Tu trabajo aquí es orquestar su ejecución, no reabrirlo.
 
@@ -125,20 +139,37 @@ Commits realizados:
 Ficheros modificados: [lista breve]
 
 Revisa los cambios. Avísame cuando estés listo para continuar.
-Siguiente paso: [descripción del paso N+1, o "este era el último paso"]
+Siguiente paso: [descripción del paso N+1, o "este era el último paso del ticket"]
 ```
 
 NO lances el siguiente paso automáticamente, espera confirmación explícita.
 
-Cuando se confirme, marca el paso completado en el `indice.md` (cambia `[ ]` por `[x]`) y procede al siguiente paso.
+Cuando se confirme, marca el paso completado en el `indice.md` (cambia `[ ]` por `[x]`) y en el checklist del issue del ticket, y procede al siguiente paso.
 
-### 5. Finalización
+## Cierre del ticket
 
-Cuando todos los pasos estén en `[x]`:
+Cuando todos los baby-steps del ticket estén en `[x]`:
+
+1. Comenta y cierra el issue hijo (resolve de wayfinder): `gh issue comment <n> --body "..."` seguido de `gh issue close <n>`.
+2. Avisa al usuario que la rama está lista para PR:
 
 ```
-TODOS LOS PASOS HAN SIDO COMPLETADOS en #[id] :)
-Revisa que todos los cambios estén bien!
+Ticket #[n] completado :)
+Rama [feat/<n>-<slug>] lista. Revisa los cambios y abre la PR cuando quieras — "ejecutar" no la abre por vos.
+
+¿Hay más tickets listos en la frontera del mapa #[map]? Corré /ejecutar de nuevo sobre #[map] para verlo.
+```
+
+**`ejecutar` NO abre la PR** — eso lo hace el usuario a mano en GitHub.
+
+### Cuando el mapa se queda sin hijos abiertos
+
+Si al recalcular la frontera del mapa no quedan issues hijos abiertos, recuérdale al usuario limpiar el plan:
+
+```
+El mapa #[map] ya no tiene tickets abiertos. El plan en `.scratch/<feature-slug>/` cumplió
+su función — el registro permanente ya son el código, los issues cerrados y el historial
+de git. Podés borrarlo con un commit tipo `chore: limpiar plan de <feature-slug>`.
 ```
 
 ## Reglas
@@ -149,3 +180,4 @@ Revisa que todos los cambios estén bien!
 - Máximo 1 reintento del subagente antes de escalar al usuario
 - Si el usuario pide saltar un paso, avisar del riesgo y pedir confirmación explícita
 - Los pasos se ejecutan en orden salvo que el usuario indique lo contrario
+- NO abrir la PR: eso queda siempre en manos del usuario

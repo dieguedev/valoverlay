@@ -1,6 +1,6 @@
 ---
 name: planificar
-description: Planifica una tarea en baby-steps con TDD: obtiene el contexto de la tarea (ticket de GitHub o descripción directa del usuario), hace un interrogatorio con el usuario, lanza un subagente investigador del codebase y genera un plan listo para ejecutar con /ejecutar.
+description: Planifica una feature completa en baby-steps con TDD, partiendo de la conversación o del pedido del usuario (no de un ticket ya existente). Hace un interrogatorio con el usuario, lanza un subagente investigador del codebase, genera el plan completo y lo publica como issue mapa en GitHub para continuar con /crear-tickets.
 disable-model-invocation: true
 ---
 
@@ -32,11 +32,9 @@ echo "Nombre del proyecto: $PROJECT_NAME"
 echo "Ticket tracker: $TICKET_TRACKER_TYPE"
 ```
 
-- Extrae el ID del ticket del nombre de rama.
-- Las ramas siguen el patrón `tipo/NNNNN-descripcion` o `NNNNN/descripcion` (NNNNN es el ID del ticket).
-- Si no hay ID numérico:
-  - Y `TICKET_TRACKER_TYPE` no es `none`, **pide el ID al usuario antes de continuar**.
-  - Y `TICKET_TRACKER_TYPE` es `none`, pide un identificador corto en kebab-case para nombrar la carpeta de output (p. ej. `login-fix`) y úsalo como `TASK_ID`.
+- Si `TICKET_TRACKER_TYPE` no es `none`, lee `$PROJECT_ROOT/docs/agents/issue-tracker.md` y sigue sus convenciones para cualquier operación contra el tracker (crear issues, labels, wayfinding), en vez de improvisar lógica propia de `gh`. Si el fichero no existe, dile al usuario que corra `/setup-matt-pocock-skills` antes de continuar.
+- `planificar` es el punto de entrada del pipeline: parte siempre de la conversación o del pedido del usuario, nunca de un ticket ya existente (el ticket — el issue mapa — es el resultado de esta skill, no su input). Por eso no hace falta extraer ningún ID de la rama actual.
+- Pide al usuario un identificador corto en kebab-case para la feature (p. ej. `login-fix`) y úsalo como `FEATURE_SLUG`. Se usa para nombrar la carpeta de output y, más adelante, el issue mapa.
 - La config de esta skill vive en [references/config.json](references/config.json).
 
 ### 0.2 — Decidir dónde guardar el output
@@ -48,11 +46,10 @@ echo "Ticket tracker: $TICKET_TRACKER_TYPE"
 **Si NO tiene el MCP:**
 
 - Comentárselo primero, por si quiere activarlo.
-- Si el usuario no quiere Obsidian, guardar de forma local:
+- Si el usuario no quiere Obsidian, guardar de forma local, commiteada al repo (no en `/tmp`, que es efímero):
 
 ```bash
-TASK_ID=[id extraído o pedido]
-OUTPUT_DIR="/tmp/${PROJECT_NAME}-tasks/$TASK_ID"
+OUTPUT_DIR="$PROJECT_ROOT/.scratch/${FEATURE_SLUG}"
 mkdir -p "$OUTPUT_DIR/steps"
 echo "Output dir: $OUTPUT_DIR"
 ```
@@ -60,8 +57,8 @@ echo "Output dir: $OUTPUT_DIR"
 ### 0.3 — Estructura de carpetas del output (fija)
 
 ```
-$PROJECT_NAME/
-└── TASK_ID (p.ej. login-fix/)
+.scratch/
+└── FEATURE_SLUG (p.ej. login-fix/)
     ├── steps/
     │   ├── step-01-descripcion-en-kebab-case
     │   ├── step-02-descripcion-en-kebab-case
@@ -78,47 +75,22 @@ La estructura es fija; cualquier contenido debe estar en esos ficheros.
 
 ## FASE 1: Obtener contexto de la tarea
 
-### 1.1 — Según `TICKET_TRACKER_TYPE`
+`planificar` reemplaza a `to-spec` como punto de entrada del pipeline: parte siempre de la conversación o del pedido directo del usuario, nunca de un ticket ya existente, independientemente de `TICKET_TRACKER_TYPE`.
 
-**`none`:**
+### 1.1 — Reunir el contexto
 
-- No hay tracker. Pregunta directamente al usuario:
+Si ya hay contexto suficiente en la conversación actual, parte de él y pide solo lo que falte. Si no, pregunta directamente:
 
 ```
 "¿Qué hay que hacer? Dame un resumen de la tarea (objetivo, alcance y, si los tienes claros, criterios de aceptación)."
 ```
 
-- No hay work item ni Figma que buscar. El contexto de la tarea es lo que responda el usuario.
-
-**`github`:**
-
-- Usa `gh issue view [ID] --json title,body,labels,url` para obtener el issue con el ID extraído en FASE 0.1.
-- Busca enlaces a Figma o diseño en el body.
-
 ### 1.2 — Presentar resumen al usuario
 
-**Si `TICKET_TRACKER_TYPE` es `none`:**
-
 ```
-Tarea: [TASK_ID]
+Feature: [FEATURE_SLUG]
 
-Tenemos que: [Resumen en 2-3 frases, a partir de lo que ha dicho el usuario]
-
-¿Es correcto?
-```
-
-**Si `TICKET_TRACKER_TYPE` es `github`:**
-
-```
-Ticket #[id] — [título]
-Tipo: [type]
-Figma: [links o "No se ha encontrado ningun enlace a Figma"]
-
-Criterios de aceptación del ticket:
-  - [AC1]
-  - [AC2]
-
-Tenemos que: [Resumen en 2-3 frases]
+Tenemos que: [Resumen en 2-3 frases, a partir de lo que ha dicho el usuario o de la conversación]
 
 ¿Es correcto?
 ```
@@ -131,7 +103,7 @@ Tenemos que: [Resumen en 2-3 frases]
 
 ### FASE 2a — Generar preguntas de investigación
 
-Antes de lanzar cualquier agente, genera una lista de preguntas objetivas sobre el codebase **a partir solo del contexto de la tarea** (el resumen de FASE 1, venga de un ticket o de lo que haya dicho el usuario en freeform).
+Antes de lanzar cualquier agente, genera una lista de preguntas objetivas sobre el codebase **a partir solo del contexto de la tarea** (el resumen de FASE 1).
 
 Ejemplos de forma:
 
@@ -147,9 +119,9 @@ Ejemplos de forma:
 
 Lanza un **subagente explorador** usando el prompt de [references/agente-explorador.md](references/agente-explorador.md), rellenando:
 
-- `[TICKET_ID]` y `[TICKET_TÍTULO]` — `TASK_ID` y el título/resumen obtenidos en FASE 1
+- `[TICKET_ID]` y `[TICKET_TÍTULO]` — `FEATURE_SLUG` y el resumen obtenido en FASE 1
 - `[PREGUNTAS_FASE_2A]` — las preguntas generadas en la FASE 2a
-- `[CONTEXTO_TICKET]` — el contexto de la tarea completo (ticket o resumen freeform)
+- `[CONTEXTO_TICKET]` — el contexto de la tarea completo (resumen freeform de FASE 1)
 - `[OUTPUT_DIR]` — el path calculado en FASE 0
 
 ### FASE 2c — Sesión de interrogatorio
@@ -173,12 +145,12 @@ Calcula el path de la skill `tdd` usando: `$PROJECT_ROOT/.claude/skills/tdd/SKIL
 
 Lanza un **subagente planificador** usando el prompt de [references/agente-planificador.md](references/agente-planificador.md), rellenando:
 
-- `[TICKET_ID]` y `[TICKET_TÍTULO]` — `TASK_ID` y el título/resumen obtenidos en FASE 1
+- `[TICKET_ID]` y `[TICKET_TÍTULO]` — `FEATURE_SLUG` y el resumen obtenido en FASE 1
 - `[OUTPUT_DIR]` — el path calculado en FASE 0
 
 Y adjuntándole:
 
-1. El contexto completo de la tarea (ticket o resumen freeform, con criterios de aceptación si existen)
+1. El contexto completo de la tarea (resumen freeform de FASE 1, con criterios de aceptación si existen)
 2. El fichero `investigacion.md` generado en FASE 2b
 3. El acuerdo de la sesión de interrogatorio
 4. El path de la skill `tdd`
@@ -192,7 +164,7 @@ Y adjuntándole:
 Lee `$OUTPUT_DIR/indice.md` y usa este formato:
 
 ```md
-Plan generado para [TASK_ID].
+Plan generado para [FEATURE_SLUG].
 
 Baby-steps:
 
@@ -212,18 +184,62 @@ Puedes leer el plan más en detalle en `$OUTPUT_DIR`
 
 ### 3.3 — Cierre
 
-Cuando el usuario apruebe el plan, escribe:
+Cuando el usuario apruebe el plan (solo aplica si el output es local — si vive en Obsidian, omite los pasos de commit/publicación y avisa al usuario de que tendrá que compartir la ruta de Obsidian a mano con `/crear-tickets`):
 
-```md
-Ya hemos llegado a un acuerdo y creado un plan! :)
+1. **Commitear el plan al repo**:
 
-Lo siguiente que tienes que hacer es abrir un nuevo chat y usar la skill
-"/ejecutar" pasándole la ruta del index:
-
-Ruta: `$OUTPUT_DIR/indice.md`
+```bash
+git add "$OUTPUT_DIR"
+git commit -m "chore: plan de $FEATURE_SLUG"
 ```
 
-> Si OUTPUT_DIR es Obsidian y no lo puedes representar bien, escribe `[Ruta] usando el MCP de Obsidian` en vez de una ruta local que no sirva.
+En la rama actual, o en `main` si todavía no existe una rama de feature dedicada.
+
+2. **Publicar el issue mapa en GitHub** — label `wayfinder:map` (convención documentada en `docs/agents/issue-tracker.md`), con el mismo template de spec que usaba `to-spec`:
+
+<spec-template>
+
+## Descripción del problema
+
+El problema que enfrenta el usuario, desde su perspectiva.
+
+## Solución
+
+La solución al problema, desde la perspectiva del usuario.
+
+## Historias de usuario
+
+Una lista numerada y extensa de user stories, formato:
+
+1. COMO <actor>, QUIERO <feature>, PARA <benefit>
+
+## Decisiones de implementación
+
+Decisiones de implementación tomadas durante el interrogatorio (módulos, interfaces, decisiones arquitectónicas, contratos). Sin rutas de fichero ni snippets de código — quedan desactualizados rápido.
+
+## Decisiones de testing
+
+Decisiones de testing tomadas: qué se prueba, con qué criterio, prior art del codebase.
+
+## Fuera del scope
+
+Qué queda fuera de esta feature.
+
+## Notas adicionales
+
+Puntero al plan commiteado: `$OUTPUT_DIR/indice.md` (o la ruta de Obsidian, si aplica).
+
+</spec-template>
+
+Publícalo con `gh issue create --title "[FEATURE_SLUG]" --label "wayfinder:map" --body "..."` (heredoc para el body).
+
+3. Escribe al usuario:
+
+```md
+Ya hemos llegado a un acuerdo, creado un plan y publicado el issue mapa #[N]! :)
+
+Lo siguiente que tienes que hacer es correr `/crear-tickets` sobre el issue #[N].
+```
 
 ---
 
@@ -233,6 +249,6 @@ Ruta: `$OUTPUT_DIR/indice.md`
 - NO escribas código en esta sesión. Para eso está `ejecutar`.
 - NO lances la ejecución desde aquí. La ejecución es en otro chat.
 - NO avances sin acuerdo explícito del usuario al final de la sesión de interrogatorio.
-- Si `TICKET_TRACKER_TYPE` no es `none` y el ticket NO tiene ID numérico en la rama, pídelo ANTES de continuar.
+- NO partas de un ticket ya existente: esta skill siempre arranca de la conversación/pedido del usuario, incluso con `TICKET_TRACKER_TYPE` en `github`.
 - Si el usuario tiene el MCP de Obsidian activo, pregunta SIEMPRE la bóveda antes de guardar.
 - Para adaptar este skill a otro proyecto, edita únicamente [references/config.json](references/config.json) — no toques la lógica de las fases.
