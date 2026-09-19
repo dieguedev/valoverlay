@@ -151,16 +151,25 @@ Cuando se confirme, marca el paso completado en el `indice.md` (cambia `[ ]` por
 Cuando todos los baby-steps del ticket estén en `[x]`:
 
 1. Comenta y cierra el issue hijo (resolve de wayfinder): `gh issue comment <n> --body "..."` seguido de `gh issue close <n>`.
-2. Avisa al usuario que la rama está lista para PR:
+2. Push de la rama y apertura de la PR:
+
+```bash
+git push -u origin feat/<n>-<slug>
+gh pr create --base main --title "<título del ticket>" --body "Closes #<n>
+
+Parte del mapa #<map>."
+```
+
+3. Avisa al usuario:
 
 ```
 Ticket #[n] completado :)
-Rama [feat/<n>-<slug>] lista. Revisa los cambios y abre la PR cuando quieras — "ejecutar" no la abre por vos.
+PR abierta: [url de la PR devuelta por gh pr create]
 
 ¿Hay más tickets listos en la frontera del mapa #[map]? Corré /ejecutar de nuevo sobre #[map] para verlo.
 ```
 
-**`ejecutar` NO abre la PR** — eso lo hace el usuario a mano en GitHub.
+**`ejecutar` SÍ abre la PR** al cerrar el ticket, contra `main`, con `Closes #<n>` para que el merge cierre el issue automáticamente.
 
 ### Cuando el mapa se queda sin hijos abiertos
 
@@ -180,4 +189,4 @@ de git. Podés borrarlo con un commit tipo `chore: limpiar plan de <feature-slug
 - Máximo 1 reintento del subagente antes de escalar al usuario
 - Si el usuario pide saltar un paso, avisar del riesgo y pedir confirmación explícita
 - Los pasos se ejecutan en orden salvo que el usuario indique lo contrario
-- NO abrir la PR: eso queda siempre en manos del usuario
+- Al cerrar el ticket, abrir la PR contra `main` con `gh pr create` (no dejarla en manos del usuario)
