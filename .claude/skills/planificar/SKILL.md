@@ -49,7 +49,7 @@ echo "Ticket tracker: $TICKET_TRACKER_TYPE"
 - Si el usuario no quiere Obsidian, guardar de forma local, commiteada al repo (no en `/tmp`, que es efímero):
 
 ```bash
-OUTPUT_DIR="$PROJECT_ROOT/.scratch/${FEATURE_SLUG}"
+OUTPUT_DIR="$PROJECT_ROOT/.plans/${FEATURE_SLUG}"
 mkdir -p "$OUTPUT_DIR/steps"
 echo "Output dir: $OUTPUT_DIR"
 ```
@@ -57,7 +57,7 @@ echo "Output dir: $OUTPUT_DIR"
 ### 0.3 — Estructura de carpetas del output (fija)
 
 ```
-.scratch/
+.plans/
 └── FEATURE_SLUG (p.ej. login-fix/)
     ├── steps/
     │   ├── step-01-descripcion-en-kebab-case

@@ -52,7 +52,7 @@ Si el usuario no especifica, toma el primero en el orden del mapa.
 
 1. **Claim**: `gh issue edit <n> --add-assignee @me` (primera escritura de la sesión, según la convención de wayfinder).
 2. **Rama dedicada**: crea y cambia a una rama para este ticket, p. ej. `feat/<n>-<slug>`.
-3. **Cargar el plan agrupado**: lee el issue del ticket (`gh issue view <n> --comments`) para obtener el checklist de baby-steps que agrupa y el `FEATURE_SLUG` (de la ruta `.scratch/<feature-slug>/` que apunta). Lee de ahí `indice.md` y localiza, dentro de `steps/*.md`, únicamente los ficheros de los baby-steps que este ticket agrupa.
+3. **Cargar el plan agrupado**: lee el issue del ticket (`gh issue view <n> --comments`) para obtener el checklist de baby-steps que agrupa y el `FEATURE_SLUG` (de la ruta `.plans/<feature-slug>/` que apunta). Lee de ahí `indice.md` y localiza, dentro de `steps/*.md`, únicamente los ficheros de los baby-steps que este ticket agrupa.
 
 Identifica los pasos pendientes (`[ ]`) del ticket y pregunta:
 
@@ -167,7 +167,7 @@ Rama [feat/<n>-<slug>] lista. Revisa los cambios y abre la PR cuando quieras —
 Si al recalcular la frontera del mapa no quedan issues hijos abiertos, recuérdale al usuario limpiar el plan:
 
 ```
-El mapa #[map] ya no tiene tickets abiertos. El plan en `.scratch/<feature-slug>/` cumplió
+El mapa #[map] ya no tiene tickets abiertos. El plan en `.plans/<feature-slug>/` cumplió
 su función — el registro permanente ya son el código, los issues cerrados y el historial
 de git. Podés borrarlo con un commit tipo `chore: limpiar plan de <feature-slug>`.
 ```

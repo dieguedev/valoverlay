@@ -14,7 +14,7 @@ El tracker de issues y el vocabulario de labels de triage deberían haberte sido
 
 ### 1. Reunir contexto
 
-Si el usuario pasa un issue mapa (un issue `wayfinder:map` publicado por `/planificar`) como argumento, léelo y lee `.scratch/<feature-slug>/indice.md` y `steps/*.md` del repo — ese plan es tu input, no la conversación en crudo. En caso contrario, trabaja con lo que ya haya en el contexto de la conversación, o busca la spec/issue de referencia que haya pasado el usuario.
+Si el usuario pasa un issue mapa (un issue `wayfinder:map` publicado por `/planificar`) como argumento, léelo y lee `.plans/<feature-slug>/indice.md` y `steps/*.md` del repo — ese plan es tu input, no la conversación en crudo. En caso contrario, trabaja con lo que ya haya en el contexto de la conversación, o busca la spec/issue de referencia que haya pasado el usuario.
 
 ### 2. Explorar el codebase (opcional)
 
@@ -61,15 +61,15 @@ Itera hasta que el usuario apruebe el desglose.
 
 Publica los tickets aprobados como **issues hijos de wayfinder** del mapa (convenciones en `docs/agents/issue-tracker.md`), en orden de dependencia (blockers primero) para que los blocking edges de cada ticket puedan referenciar identificadores reales.
 
-Cada issue hijo es **liviano** — NO repite el contrato completo de los baby-steps que agrupa (eso puede sumar varios cientos de líneas entre varios steps). Solo apunta a lo que ya está commiteado en `.scratch/<feature-slug>/steps/`:
+Cada issue hijo es **liviano** — NO repite el contrato completo de los baby-steps que agrupa (eso puede sumar varios cientos de líneas entre varios steps). Solo apunta a lo que ya está commiteado en `.plans/<feature-slug>/steps/`:
 
 - Un checklist con los títulos de los baby-steps que agrupa este ticket (no su contrato completo).
 - Criterios de aceptación del paquete completo.
-- Un puntero a `.scratch/<feature-slug>/steps/` con el contrato completo de cada baby-step (tarea, tests en rojo, criterio de verde, ficheros afectados, commits propuestos).
+- Un puntero a `.plans/<feature-slug>/steps/` con el contrato completo de cada baby-step (tarea, tests en rojo, criterio de verde, ficheros afectados, commits propuestos).
 - Blocking edges nativos hacia los tickets que lo condicionan (`docs/agents/issue-tracker.md` → Blocking), el mismo mecanismo ya usado entre tickets hermanos.
 - Labels: `ready-for-agent` (agent-grabbable por construcción) **+** `wayfinder:task` (compatible con la convención de wayfinder — ambos labels conviven sin conflicto).
 
-Si esta ejecución no tiene un plan de `planificar` detrás (input de spec/conversación), publica los tickets de la misma forma pero sin puntero a `.scratch/` — usa el cuerpo completo del ticket en línea, según la plantilla de abajo.
+Si esta ejecución no tiene un plan de `planificar` detrás (input de spec/conversación), publica los tickets de la misma forma pero sin puntero a `.plans/` — usa el cuerpo completo del ticket en línea, según la plantilla de abajo.
 
 Trabaja la **frontera**: cualquier ticket cuyos blockers estén todos completados. Para una cadena puramente lineal eso significa de arriba a abajo.
 
@@ -88,7 +88,7 @@ El comportamiento end-to-end que este ticket hace funcionar, desde la perspectiv
 - [ ] [step-NN-nombre] — descripción en una línea
 - [ ] [step-NN-nombre] — descripción en una línea
 
-Contrato completo de cada step (seam, tests en rojo, criterio de verde, ficheros afectados, commits propuestos): `.scratch/<feature-slug>/steps/`
+Contrato completo de cada step (seam, tests en rojo, criterio de verde, ficheros afectados, commits propuestos): `.plans/<feature-slug>/steps/`
 
 ## Criterios de aceptación
 
@@ -122,4 +122,4 @@ El comportamiento end-to-end que este ticket hace funcionar, desde la perspectiv
 
 </standalone-issue-template>
 
-En cualquiera de las dos formas, evita rutas de fichero o snippets de código más allá del puntero a `.scratch/`: quedan desactualizados rápido. Excepción: si un prototipo produjo un snippet que codifica una decisión con más precisión de la que puede dar la prosa (máquina de estados, reducer, schema, forma de un tipo), inclúyelo y anota brevemente que viene de un prototipo. Recorta a las partes ricas en decisiones, no una demo funcional, solo lo importante.
+En cualquiera de las dos formas, evita rutas de fichero o snippets de código más allá del puntero a `.plans/`: quedan desactualizados rápido. Excepción: si un prototipo produjo un snippet que codifica una decisión con más precisión de la que puede dar la prosa (máquina de estados, reducer, schema, forma de un tipo), inclúyelo y anota brevemente que viene de un prototipo. Recorta a las partes ricas en decisiones, no una demo funcional, solo lo importante.
