@@ -6,7 +6,7 @@ Fecha: 2026-09-17
 ## Baby-steps a seguir
 
 - [ ] [step-01-vitest-rtl-panel.md](steps/step-01-vitest-rtl-panel.md) — Instalar y configurar Vitest + RTL + jsdom en apps/panel, verificado con un test de humo
-- [ ] [step-02-vitest-supertest-server.md](steps/step-02-vitest-supertest-server.md) — Instalar Vitest + supertest en apps/server, extrayendo un `app.ts` testable sin efectos secundarios
+- [x] [step-02-vitest-supertest-server.md](steps/step-02-vitest-supertest-server.md) — Instalar Vitest + supertest en apps/server, extrayendo un `app.ts` testable sin efectos secundarios
 - [ ] [step-03-sass-design-tokens.md](steps/step-03-sass-design-tokens.md) — Instalar SASS y definir los tokens de diseño (color, tipografía, espaciado) de la marca
 - [ ] [step-04-react-router-public-layout.md](steps/step-04-react-router-public-layout.md) — Instalar React Router y definir las 5 rutas públicas con páginas placeholder
 - [ ] [step-05-seo-meta-tags.md](steps/step-05-seo-meta-tags.md) — Meta tags SEO/Open Graph base en index.html + componente `Seo` reutilizable por ruta
