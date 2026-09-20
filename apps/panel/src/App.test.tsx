@@ -1,16 +1,70 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
-import App from './App'
+import { MemoryRouter } from 'react-router-dom'
+import { describe, expect, it } from 'vitest'
+import { App } from './App'
 
-describe('App', () => {
-  it('renderiza el estado del servidor', () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(() => Promise.reject(new Error('not mocked'))),
+describe('rutas públicas', () => {
+  it('renderiza la página de inicio en /', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
     )
 
-    render(<App />)
+    expect(screen.getByRole('heading', { name: /inicio/i })).toBeInTheDocument()
+  })
 
-    expect(screen.getByText(/server status/i)).toBeInTheDocument()
+  it('renderiza la página de login en /login', () => {
+    render(
+      <MemoryRouter initialEntries={['/login']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('heading', { name: /iniciar sesión/i })).toBeInTheDocument()
+  })
+
+  it('renderiza la página de registro en /register', () => {
+    render(
+      <MemoryRouter initialEntries={['/register']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(screen.getByRole('heading', { name: /crear cuenta/i })).toBeInTheDocument()
+  })
+
+  it('renderiza la página de privacidad en /privacy', () => {
+    render(
+      <MemoryRouter initialEntries={['/privacy']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: /política de privacidad/i }),
+    ).toBeInTheDocument()
+  })
+
+  it('renderiza la página de términos en /terms', () => {
+    render(
+      <MemoryRouter initialEntries={['/terms']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(
+      screen.getByRole('heading', { name: /términos y condiciones/i }),
+    ).toBeInTheDocument()
+  })
+
+  it('la home page fija su propio title', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(document.title).toBe('Valoverlay | Overlay de Valorant para streams')
   })
 })
