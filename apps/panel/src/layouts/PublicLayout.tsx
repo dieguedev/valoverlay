@@ -1,7 +1,5 @@
 import { Outlet } from 'react-router-dom'
 
-function PublicLayout() {
+export const PublicLayout: React.FC = () => {
   return <Outlet />
 }
-
-export default PublicLayout

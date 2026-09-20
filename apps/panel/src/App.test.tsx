@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
-import App from './App'
+import { App } from './App'
 
 describe('rutas públicas', () => {
   it('renderiza la página de inicio en /', () => {
@@ -65,6 +65,6 @@ describe('rutas públicas', () => {
       </MemoryRouter>,
     )
 
-    expect(document.title).toBe('ValoVerlay — Overlays para tus partidas de Valorant')
+    expect(document.title).toBe('Valoverlay | Overlay de Valorant para streams')
   })
 })

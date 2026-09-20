@@ -1,6 +1,6 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import Seo from "./Seo";
+import { Seo } from "./Seo";
 
 describe("Seo", () => {
   it("escribe el title del documento", () => {

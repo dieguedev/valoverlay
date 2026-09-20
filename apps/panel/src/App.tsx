@@ -1,12 +1,12 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
-import PublicLayout from './layouts/PublicLayout'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import PrivacyPolicy from './pages/PrivacyPolicy'
-import Register from './pages/Register'
-import TermsAndConditions from './pages/TermsAndConditions'
+import { PublicLayout } from './layouts/PublicLayout'
+import { Home } from './pages/Home'
+import { Login } from './pages/Login'
+import { PrivacyPolicy } from './pages/PrivacyPolicy'
+import { Register } from './pages/Register'
+import { TermsAndConditions } from './pages/TermsAndConditions'
 
-function App() {
+export const App: React.FC = () => {
   return (
     <Routes>
       <Route element={<PublicLayout />}>
@@ -20,5 +20,3 @@ function App() {
     </Routes>
   )
 }
-
-export default App

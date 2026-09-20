@@ -3,7 +3,7 @@ interface SeoProps {
   description: string;
 }
 
-const Seo: React.FC<SeoProps> = ({ title, description }) => {
+export const Seo: React.FC<SeoProps> = ({ title, description }) => {
   return (
     <>
       <title>{title}</title>
@@ -11,5 +11,3 @@ const Seo: React.FC<SeoProps> = ({ title, description }) => {
     </>
   );
 };
-
-export default Seo;

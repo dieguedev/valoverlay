@@ -1,5 +1,3 @@
-function Register() {
+export const Register: React.FC = () => {
   return <h1>Crear cuenta</h1>
 }
-
-export default Register
