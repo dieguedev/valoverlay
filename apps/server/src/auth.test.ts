@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { app } from "./app.js";
 import { db } from "./db/index.js";
 import { user } from "./db/auth-schema.js";
-import { cleanAuthTables } from "./test/db.js";
+import { cleanAuthTables, createTestUser } from "./test/db.js";
 
 describe("POST /api/auth/sign-up/email", () => {
   beforeEach(async () => {
@@ -58,5 +58,46 @@ describe("POST /api/auth/sign-up/email", () => {
       .where(eq(user.email, payload.email));
 
     expect(rows).toHaveLength(1);
+  });
+});
+
+describe("POST /api/auth/sign-in/email", () => {
+  beforeEach(async () => {
+    await cleanAuthTables();
+  });
+
+  it("autentica con email y password correctos", async () => {
+    const email = "qa+signin@valoverlay.test";
+    const password = "Contraseña123!";
+    await createTestUser(email, password);
+
+    const res = await request(app).post("/api/auth/sign-in/email").send({
+      email,
+      password,
+    });
+
+    expect(res.status).toBe(200);
+    expect(res.headers["set-cookie"]).not.toBeUndefined();
+  });
+
+  it("rechaza un password incorrecto", async () => {
+    const email = "qa+wrongpass@valoverlay.test";
+    await createTestUser(email, "Contraseña123!");
+
+    const res = await request(app).post("/api/auth/sign-in/email").send({
+      email,
+      password: "OtraContraseña456!",
+    });
+
+    expect(res.status).toBeGreaterThanOrEqual(400);
+  });
+
+  it("rechaza un email que no existe", async () => {
+    const res = await request(app).post("/api/auth/sign-in/email").send({
+      email: "qa+noexiste@valoverlay.test",
+      password: "Contraseña123!",
+    });
+
+    expect(res.status).toBeGreaterThanOrEqual(400);
   });
 });
