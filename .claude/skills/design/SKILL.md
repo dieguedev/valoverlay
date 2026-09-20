@@ -16,17 +16,17 @@ Dos capas de fondo (base + elevado) para que los paneles se distingan por valor,
 
 - Reservado para tarjetas, paneles, controles, un nivel por encima del fondo.
 
-### Acento primario
+### Acento primario
 
 - Reservado para elementos interactivos "en vivo" (foco, selección, datos en tiempo real).
 - NO USAR para texto largo ni decoración plana.
 
-### Acento cálido
+### Acento cálido
 
 - Reservado para alertas y estados de contraste (avisos, kill-feed)
 - NO USAR como acento general aunque combine bien.
 
-### Texto
+### Texto
 
 Hay 3 tipos distintos:
 
