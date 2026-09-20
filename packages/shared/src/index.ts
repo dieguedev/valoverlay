@@ -1,3 +1,1 @@
-export type HealthResponse = {
-  status: "ok";
-};
+export {};
