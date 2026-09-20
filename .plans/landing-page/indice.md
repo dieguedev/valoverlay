@@ -10,9 +10,9 @@ Fecha: 2026-09-17
 - [x] [step-03-sass-design-tokens.md](steps/step-03-sass-design-tokens.md) — Instalar SASS y definir los tokens de diseño (color, tipografía, espaciado) de la marca
 - [x] [step-04-react-router-public-layout.md](steps/step-04-react-router-public-layout.md) — Instalar React Router y definir las 5 rutas públicas con páginas placeholder
 - [x] [step-05-seo-meta-tags.md](steps/step-05-seo-meta-tags.md) — Meta tags SEO/Open Graph base en index.html + componente `Seo` reutilizable por ruta
-- [ ] [step-06-header-component.md](steps/step-06-header-component.md) — Componente `Header` (logo + navegación + CTAs a login/register)
-- [ ] [step-07-footer-component.md](steps/step-07-footer-component.md) — Componente `Footer` (enlaces legales + copyright)
-- [ ] [step-08-public-layout-header-footer.md](steps/step-08-public-layout-header-footer.md) — Integrar `Header` y `Footer` en `PublicLayout`
+- [x] [step-06-header-component.md](steps/step-06-header-component.md) — Componente `Header` (logo + navegación + CTAs a login/register)
+- [x] [step-07-footer-component.md](steps/step-07-footer-component.md) — Componente `Footer` (enlaces legales + copyright)
+- [x] [step-08-public-layout-header-footer.md](steps/step-08-public-layout-header-footer.md) — Integrar `Header` y `Footer` en `PublicLayout`
 - [ ] [step-09-hero-section.md](steps/step-09-hero-section.md) — Sección Hero con copy real y CTA a /register
 - [ ] [step-10-features-section.md](steps/step-10-features-section.md) — Sección Features con copy real de las tres piezas del producto
 - [ ] [step-11-como-funciona-section.md](steps/step-11-como-funciona-section.md) — Sección "Cómo funciona" con los pasos del flujo de usuario

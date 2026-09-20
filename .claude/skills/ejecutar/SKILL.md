@@ -36,11 +36,11 @@ Con el número de mapa, lee `$PROJECT_ROOT/docs/agents/issue-tracker.md` (secci�
 Presenta la frontera al usuario:
 
 ```
-Mapa: #[map] — [título]
+Mapa #[map] - [título]
 
 Tickets listos para arrancar (sin blockers pendientes, sin asignar):
-  - #[n1] — [título]
-  - #[n2] — [título]
+  - #[n1] - [título]
+  - #[n2] -  [título]
   ...
 
 ¿Con cuál seguimos?
@@ -57,7 +57,7 @@ Si el usuario no especifica, toma el primero en el orden del mapa.
 Identifica los pasos pendientes (`[ ]`) del ticket y pregunta:
 
 ```
-Ticket #[n] — [título]
+Ticket #[n]: [título]
 
 Pasos pendientes:
   [ ] 1. [descripción]
@@ -69,7 +69,7 @@ Pasos pendientes:
 
 ## Ciclo de ejecución por paso
 
-Para **TODOS LOS PASOS**, sigue este ciclo (sin cambios respecto al pipeline anterior — este es el gate fino que no se sacrifica frente al `/implement` oficial):
+Para **TODOS LOS PASOS**, sigue este ciclo (sin cambios respecto al pipeline anterior, es el gate fino que no se sacrifica frente al `/implement` oficial):
 
 ### 1. Cargar contexto del paso
 
@@ -85,6 +85,7 @@ Si el step incluye una sección "Tests a escribir en rojo", añade también la s
 ### 2. Lanzar el subagente ejecutor
 
 Lanza el subagente con:
+
 - Contenido completo del fichero del paso.
 - La lista de paths de skills
 - La siguiente instrucción de ejecución:
@@ -96,7 +97,7 @@ commits ya están decididos en el fichero del paso. NO los reinterpretes ni los 
 Si el step tiene sección "Tests a escribir en rojo", sigue el bucle red-green-refactor de
 la skill `tdd` que ya has leído, con estas particularidades de este contexto:
 
-- El seam ya está acordado en el step — no hay paso de confirmación con el usuario, sáltatelo.
+- El seam ya está acordado en el step, no hay paso de confirmación con el usuario, sáltatelo.
 - Los tests del rojo son exactamente los descritos en "Tests a escribir en rojo": mismo
   fichero, mismos describe/it, mismo motivo de fallo. No inventes tests adicionales.
 - Tras cada fase del bucle (rojo, implementación, verde, refactor si aplica), haz el commit
@@ -119,6 +120,7 @@ Reglas absolutas:
 ### 3. Gestión de fallos
 
 Si el subagente escala un fallo:
+
 - Muestra el resumen del fallo al usuario
 - Si el fallo revela que el seam o los tests definidos en el step estaban mal planteados, no lo decidas tú: coméntaselo al usuario explícitamente, puede implicar reabrir `/planificar` para ese step
 - El usuario decide: ajustar el test, dar una pista de implementación, replantear el paso o reabrir la planificación
@@ -144,14 +146,15 @@ Siguiente paso: [descripción del paso N+1, o "este era el último paso del tick
 
 NO lances el siguiente paso automáticamente, espera confirmación explícita.
 
-Cuando se confirme, marca el paso completado en el `indice.md` (cambia `[ ]` por `[x]`) y en el checklist del issue del ticket, y procede al siguiente paso.
+Cuando se confirme, marca el paso completado en el `indice.md` (cambia `[ ]` por `[x]`) y en el checklist del issue del ticket, commitea el cambio de `indice.md` (el checklist del issue no se commitea, vive en GitHub) con `git commit -m "chore: Marca step-NN completado en el plan de <feature-slug>"`, y procede al siguiente paso.
+
+Si varios pasos consecutivos se confirman sin que el usuario pida commitear entre medio, está bien agrupar sus marcas de `indice.md` en un único commit tipo `chore: Marca steps NN-MM completados en el plan de <feature-slug>` al cerrar el ticket, en vez de un commit por paso.
 
 ## Cierre del ticket
 
 Cuando todos los baby-steps del ticket estén en `[x]`:
 
-1. Comenta y cierra el issue hijo (resolve de wayfinder): `gh issue comment <n> --body "..."` seguido de `gh issue close <n>`.
-2. Push de la rama y apertura de la PR:
+1. Push de la rama y apertura de la PR:
 
 ```bash
 git push -u origin feat/<n>-<slug>
@@ -160,25 +163,25 @@ gh pr create --base main --title "<título del ticket>" --body "Closes #<n>
 Parte del mapa #<map>."
 ```
 
-3. Avisa al usuario:
+**No comentes ni cierres el issue hijo en ningún punto de este flujo.** El issue queda abierto y sin comentarios de cierre/completado hasta que la PR con `Closes #<n>` se mergee a `main`. Eso es lo único que lo cierra.
+
+2. Avisa al usuario:
 
 ```
-Ticket #[n] completado :)
-PR abierta: [url de la PR devuelta por gh pr create]
+Ticket #[n]: PR abierta, pendiente de review/merge.
+PR: [url de la PR devuelta por gh pr create]
 
 ¿Hay más tickets listos en la frontera del mapa #[map]? Corré /ejecutar de nuevo sobre #[map] para verlo.
 ```
 
-**`ejecutar` SÍ abre la PR** al cerrar el ticket, contra `main`, con `Closes #<n>` para que el merge cierre el issue automáticamente.
+**`ejecutar` SÍ abre la PR** al terminar el ticket, contra `main`, con `Closes #<n>` para que el merge cierre el issue automáticamente.
 
 ### Cuando el mapa se queda sin hijos abiertos
 
 Si al recalcular la frontera del mapa no quedan issues hijos abiertos, recuérdale al usuario limpiar el plan:
 
 ```
-El mapa #[map] ya no tiene tickets abiertos. El plan en `.plans/<feature-slug>/` cumplió
-su función — el registro permanente ya son el código, los issues cerrados y el historial
-de git. Podés borrarlo con un commit tipo `chore: limpiar plan de <feature-slug>`.
+El mapa #[map] ya no tiene tickets abiertos. El plan en `.plans/<feature-slug>/` cumplió su función: el registro permanente ya son el código, los issues cerrados y el historial de git. Podés borrarlo con un commit tipo `chore: limpiar plan de <feature-slug>`.
 ```
 
 ## Reglas
