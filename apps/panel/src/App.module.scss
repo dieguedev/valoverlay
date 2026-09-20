@@ -1,0 +1,7 @@
+@use './styles/tokens' as *;
+
+.status {
+  color: $color-text;
+  font-family: $font-family-body;
+  font-size: $font-size-body;
+}

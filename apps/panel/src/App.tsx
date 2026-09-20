@@ -1,5 +1,6 @@
 import type { HealthResponse } from '@valoverlay/shared'
 import { useEffect, useState } from 'react'
+import styles from './App.module.scss'
 
 function App() {
   const [status, setStatus] = useState<string>('loading...')
@@ -11,7 +12,7 @@ function App() {
       .catch(() => setStatus('unreachable'))
   }, [])
 
-  return <p>server status: {status}</p>
+  return <p className={styles.status}>server status: {status}</p>
 }
 
 export default App
