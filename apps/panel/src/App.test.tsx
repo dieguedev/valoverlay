@@ -57,4 +57,14 @@ describe('rutas públicas', () => {
       screen.getByRole('heading', { name: /términos y condiciones/i }),
     ).toBeInTheDocument()
   })
+
+  it('la home page fija su propio title', () => {
+    render(
+      <MemoryRouter initialEntries={['/']}>
+        <App />
+      </MemoryRouter>,
+    )
+
+    expect(document.title).toBe('ValoVerlay — Overlays para tus partidas de Valorant')
+  })
 })
