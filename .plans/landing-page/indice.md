@@ -21,7 +21,7 @@ Fecha: 2026-09-17
 - [ ] [step-14-home-page-composicion.md](steps/step-14-home-page-composicion.md) — Componer la HomePage con todas las secciones en la ruta `/`
 - [ ] [step-15-privacy-page.md](steps/step-15-privacy-page.md) — Página `/privacy` con contenido legal borrador
 - [ ] [step-16-terms-page.md](steps/step-16-terms-page.md) — Página `/terms` con contenido legal borrador
-- [ ] [step-17-better-auth-schema-drizzle.md](steps/step-17-better-auth-schema-drizzle.md) — Instalar Better Auth + adapter Drizzle, generar y migrar el schema de auth
+- [x] [step-17-better-auth-schema-drizzle.md](steps/step-17-better-auth-schema-drizzle.md) — Instalar Better Auth + adapter Drizzle, generar y migrar el schema de auth
 - [ ] [step-18-better-auth-mount-signup.md](steps/step-18-better-auth-mount-signup.md) — Montar el handler de Better Auth en Express y probar el registro real (sign-up)
 - [ ] [step-19-better-auth-signin.md](steps/step-19-better-auth-signin.md) — Probar el login real (sign-in) contra Better Auth
 - [ ] [step-20-better-auth-google-oauth.md](steps/step-20-better-auth-google-oauth.md) — Configurar el proveedor Google OAuth en Better Auth
