@@ -1,15 +1,15 @@
 interface SeoProps {
-  title: string
-  description: string
+  title: string;
+  description: string;
 }
 
-function Seo({ title, description }: SeoProps) {
+const Seo: React.FC<SeoProps> = ({ title, description }) => {
   return (
     <>
       <title>{title}</title>
       <meta name="description" content={description} />
     </>
-  )
-}
+  );
+};
 
-export default Seo
+export default Seo;
