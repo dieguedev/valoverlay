@@ -1,0 +1,67 @@
+@use '../../styles/tokens' as *;
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-md;
+  padding: $space-md $space-xl;
+  border-bottom: 1px solid $color-border;
+  background-color: $color-bg;
+}
+
+.logo {
+  font-family: $font-family-heading;
+  font-size: $font-size-h4;
+  font-weight: $font-weight-bold;
+  color: $color-text;
+  text-decoration: none;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: $space-lg;
+  flex-wrap: wrap;
+}
+
+.loginLink {
+  font-family: $font-family-body;
+  font-size: $font-size-body;
+  font-weight: $font-weight-medium;
+  color: $color-text-muted;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-text;
+  }
+}
+
+.registerLink {
+  font-family: $font-family-body;
+  font-size: $font-size-body;
+  font-weight: $font-weight-bold;
+  color: $color-text-inverse;
+  background-color: $color-accent;
+  text-decoration: none;
+  padding: $space-xs $space-lg;
+  border-radius: $space-xxs;
+
+  &:hover {
+    background-color: $color-accent-hover;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: $space-sm $space-md;
+  }
+
+  .actions {
+    gap: $space-sm;
+  }
+
+  .registerLink {
+    padding: $space-xs $space-sm;
+  }
+}
