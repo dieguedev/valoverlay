@@ -14,7 +14,7 @@ Fecha: 2026-09-17
 - [x] [step-07-footer-component.md](steps/step-07-footer-component.md) — Componente `Footer` (enlaces legales + copyright)
 - [x] [step-08-public-layout-header-footer.md](steps/step-08-public-layout-header-footer.md) — Integrar `Header` y `Footer` en `PublicLayout`
 - [x] [step-09-hero-section.md](steps/step-09-hero-section.md) — Sección Hero con copy real y CTA a /register
-- [ ] [step-10-features-section.md](steps/step-10-features-section.md) — Sección Features con copy real de las tres piezas del producto
+- [x] [step-10-features-section.md](steps/step-10-features-section.md) — Sección Features con copy real de las tres piezas del producto
 - [ ] [step-11-como-funciona-section.md](steps/step-11-como-funciona-section.md) — Sección "Cómo funciona" con los pasos del flujo de usuario
 - [ ] [step-12-pricing-section.md](steps/step-12-pricing-section.md) — Sección Pricing (Free/Pro) con los 3 diferenciadores del plan Pro
 - [ ] [step-13-faq-section.md](steps/step-13-faq-section.md) — Sección FAQ interactiva (acordeón)
