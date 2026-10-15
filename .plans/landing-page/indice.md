@@ -17,7 +17,7 @@ Fecha: 2026-09-17
 - [x] [step-10-features-section.md](steps/step-10-features-section.md) — Sección Features con copy real de las tres piezas del producto
 - [x] [step-11-como-funciona-section.md](steps/step-11-como-funciona-section.md) — Sección "Cómo funciona" con los pasos del flujo de usuario
 - [x] [step-12-pricing-section.md](steps/step-12-pricing-section.md) — Sección Pricing (Free/Pro) con los 3 diferenciadores del plan Pro
-- [ ] [step-13-faq-section.md](steps/step-13-faq-section.md) — Sección FAQ interactiva (acordeón)
+- [x] [step-13-faq-section.md](steps/step-13-faq-section.md) — Sección FAQ interactiva (acordeón)
 - [ ] [step-14-home-page-composicion.md](steps/step-14-home-page-composicion.md) — Componer la HomePage con todas las secciones en la ruta `/`
 - [ ] [step-15-privacy-page.md](steps/step-15-privacy-page.md) — Página `/privacy` con contenido legal borrador
 - [ ] [step-16-terms-page.md](steps/step-16-terms-page.md) — Página `/terms` con contenido legal borrador
