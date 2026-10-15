@@ -15,7 +15,7 @@ Fecha: 2026-09-17
 - [x] [step-08-public-layout-header-footer.md](steps/step-08-public-layout-header-footer.md) — Integrar `Header` y `Footer` en `PublicLayout`
 - [x] [step-09-hero-section.md](steps/step-09-hero-section.md) — Sección Hero con copy real y CTA a /register
 - [x] [step-10-features-section.md](steps/step-10-features-section.md) — Sección Features con copy real de las tres piezas del producto
-- [ ] [step-11-como-funciona-section.md](steps/step-11-como-funciona-section.md) — Sección "Cómo funciona" con los pasos del flujo de usuario
+- [x] [step-11-como-funciona-section.md](steps/step-11-como-funciona-section.md) — Sección "Cómo funciona" con los pasos del flujo de usuario
 - [ ] [step-12-pricing-section.md](steps/step-12-pricing-section.md) — Sección Pricing (Free/Pro) con los 3 diferenciadores del plan Pro
 - [ ] [step-13-faq-section.md](steps/step-13-faq-section.md) — Sección FAQ interactiva (acordeón)
 - [ ] [step-14-home-page-composicion.md](steps/step-14-home-page-composicion.md) — Componer la HomePage con todas las secciones en la ruta `/`
